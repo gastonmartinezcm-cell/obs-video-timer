@@ -1,33 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 </head>
 
 <body style="margin:0; background:transparent; overflow:hidden;">
-<video id="video" muted playsinline
-       style="width:100%; height:100%; display:none;">
-  <source src="video.mp4" type="video/mp4">
-</video>
+  <video
+    id="v"
+    muted
+    playsinline
+    preload="auto"
+    style="width:100%; height:100%; display:none;"
+  >
+    <source src="video.mp4" type="video/mp4" />
+  </video>
 
-<script>
-const video = document.getElementById("video");
-const INTERVAL = 10 * 60 * 1000; // 10 minutos
+  <!-- Debug (solo para que veas si está cargando o fallando) -->
+  <div id="dbg" style="position:fixed; left:0; top:0; padding:6px 8px; font:12px Arial; color:white; background:rgba(0,0,0,.55);">
+    cargando...
+  </div>
 
-function playVideo() {
-  video.style.display = "block";
-  video.currentTime = 0;
-  video.play();
-}
+  <script>
+    const video = document.getElementById("v");
+    const dbg = document.getElementById("dbg");
 
-video.onended = () => {
-  video.style.display = "none";
-};
+    const INTERVAL = 10 * 60 * 1000; // 10 minutos
 
-setInterval(playVideo, INTERVAL);
+    async function playVideo() {
+      dbg.textContent = "intentando reproducir...";
+      video.style.display = "block";
+      video.currentTime = 0;
 
-// arrancar apenas carga la página
-playVideo();
-</script>
+      try {
+        await video.play();
+        dbg.textContent = "reproduciendo";
+      } catch (e) {
+        dbg.textContent = "ERROR autoplay/carga: " + (e?.message || e);
+        video.style.display = "none";
+      }
+    }
+
+    video.addEventListener("ended", () => {
+      video.style.display = "none";
+      dbg.textContent = "terminó (esperando 10 min)";
+    });
+
+    video.addEventListener("error", () => {
+      dbg.textContent = "ERROR cargando video (revisar nombre/archivo)";
+      video.style.display = "none";
+    });
+
+    setInterval(playVideo, INTERVAL);
+    playVideo();
+  </script>
 </body>
 </html>
