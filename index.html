@@ -9,50 +9,42 @@
   <video
     id="v"
     muted
+    autoplay
     playsinline
     preload="auto"
-    style="width:100%; height:100%; display:none;"
+    controls
+    style="width:100%; height:100%; display:block; background:black;"
   >
-    <source src="video.mp4" type="video/mp4" />
+    <source src="./video.mp4" type="video/mp4" />
   </video>
 
-  <!-- Debug (solo para que veas si está cargando o fallando) -->
-  <div id="dbg" style="position:fixed; left:0; top:0; padding:6px 8px; font:12px Arial; color:white; background:rgba(0,0,0,.55);">
+  <div id="dbg" style="position:fixed; left:0; top:0; padding:6px 8px;
+    font:12px Arial; color:white; background:rgba(0,0,0,.65); z-index:9999;">
     cargando...
   </div>
 
   <script>
-    const video = document.getElementById("v");
+    const v = document.getElementById("v");
     const dbg = document.getElementById("dbg");
-
     const INTERVAL = 10 * 60 * 1000; // 10 minutos
 
-    async function playVideo() {
+    async function playNow(){
       dbg.textContent = "intentando reproducir...";
-      video.style.display = "block";
-      video.currentTime = 0;
-
       try {
-        await video.play();
-        dbg.textContent = "reproduciendo";
+        v.currentTime = 0;
+        await v.play();
+        dbg.textContent = "reproduciendo ✅";
       } catch (e) {
-        dbg.textContent = "ERROR autoplay/carga: " + (e?.message || e);
-        video.style.display = "none";
+        dbg.textContent = "ERROR play(): " + (e?.message || e);
       }
     }
 
-    video.addEventListener("ended", () => {
-      video.style.display = "none";
-      dbg.textContent = "terminó (esperando 10 min)";
-    });
+    v.addEventListener("loadeddata", () => dbg.textContent = "video cargó ✅");
+    v.addEventListener("error", () => dbg.textContent = "ERROR cargando MP4 (ruta/archivo/cors)");
+    v.addEventListener("ended", () => dbg.textContent = "terminó (esperando 10 min) ⏳");
 
-    video.addEventListener("error", () => {
-      dbg.textContent = "ERROR cargando video (revisar nombre/archivo)";
-      video.style.display = "none";
-    });
-
-    setInterval(playVideo, INTERVAL);
-    playVideo();
+    setInterval(playNow, INTERVAL);
+    playNow();
   </script>
 </body>
 </html>
