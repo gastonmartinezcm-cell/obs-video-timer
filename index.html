@@ -37,6 +37,7 @@ const INTERVAL = 10 * 60 * 1000; // 10 minutos
 async function playVideo() {
   video.style.display = "block";
   video.currentTime = 0;
+  video.playbackRate = 0.7; // 🎬 cámara lenta al 70%
 
   try {
     await video.play();
