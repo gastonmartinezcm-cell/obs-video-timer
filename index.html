@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+</head>
+
+<body style="margin:0; background:transparent; overflow:hidden;">
+<video id="video" muted playsinline
+       style="width:100%; height:100%; display:none;">
+  <source src="video.mp4" type="video/mp4">
+</video>
+
+<script>
+const video = document.getElementById("video");
+const INTERVAL = 10 * 60 * 1000; // 10 minutos
+
+function playVideo() {
+  video.style.display = "block";
+  video.currentTime = 0;
+  video.play();
+}
+
+video.onended = () => {
+  video.style.display = "none";
+};
+
+setInterval(playVideo, INTERVAL);
+
+// arrancar apenas carga la página
+playVideo();
+</script>
+</body>
+</html>
